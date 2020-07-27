@@ -4,16 +4,24 @@ import http.client
 import json
 import os
 
+class MmdvLogoutCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		if 'MEMDEV_ACCESS' in os.environ:
+			del os.environ['MEMDEV_ACCESS']
+
 class MmdvCommand(sublime_plugin.TextCommand):
 	def __init__(self, view):
 		super().__init__(view)
-		self.BASE_URL = 'localhost:3000'
+		self.BASE_URL = 'mem.dev'
+		self.connection = 'https'
 		self.__title = ''
-		self.__source = ''
 		self.__content = ''
 
 	def __api(self, uri, params, method = 'POST'):
-		conn = http.client.HTTPConnection(self.BASE_URL)
+		if self.connection == 'http':
+			conn = http.client.HTTPConnection(self.BASE_URL)
+		else:
+			conn = http.client.HTTPSConnection(self.BASE_URL)
 		headers = {
 			'Content-type': 'application/json'
 		}
@@ -27,11 +35,6 @@ class MmdvCommand(sublime_plugin.TextCommand):
 		response = conn.getresponse()
 		return json.loads(response.read().decode())
 
-	def __show_source_panel(self):
-		window = self.view.window()
-
-		window.show_input_panel("Source", "", self.on_source_input_done, None, None)
-
 	def on_token_input_done(self, input_val):
 		params = {'id': input_val}
 		response_json = self.__api('/api/v2/authorize/ext_auth', params)
@@ -39,10 +42,9 @@ class MmdvCommand(sublime_plugin.TextCommand):
 		if response_json['token']:
 			os.environ['MEMDEV_ACCESS'] = str(response_json['token'])
 
-		self.__show_source_panel()
+		self.send_snippet()
 
-	def on_source_input_done(self, input_val):
-		self.__source = input_val
+	def send_snippet(self):
 		syntax = self.view.settings().get("syntax")
 
 		if 'Plain text' not in syntax:
@@ -53,7 +55,6 @@ class MmdvCommand(sublime_plugin.TextCommand):
 		params = {
 			'content': self.__content, 
 			'title': self.__title, 
-			'source': input_val,
 			'syntax': syntax,
 			'topic': syntax
 		}
@@ -70,8 +71,6 @@ class MmdvCommand(sublime_plugin.TextCommand):
 		if 'MEMDEV_ACCESS' not in os.environ:
 			window.show_input_panel("Enter your auth token", "", self.on_token_input_done, None, None)
 			return
-
-		self.__show_source_panel()
 
 	def run(self, edit):
 		window = self.view.window()

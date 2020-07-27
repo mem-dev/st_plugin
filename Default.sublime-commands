@@ -1,0 +1,6 @@
+[
+	{
+		"caption": "Mem.dev: Logout",
+		"command": "mmdv_logout"
+	}
+]
