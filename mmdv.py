@@ -12,8 +12,8 @@ class MmdvLogoutCommand(sublime_plugin.TextCommand):
 class MmdvCommand(sublime_plugin.TextCommand):
 	def __init__(self, view):
 		super().__init__(view)
-		self.BASE_URL = 'mem.dev'
-		self.connection = 'https'
+		self.BASE_URL = 'localhost:3000'
+		self.connection = 'http'
 		self.__title = ''
 		self.__content = ''
 
@@ -56,13 +56,20 @@ class MmdvCommand(sublime_plugin.TextCommand):
 			'content': self.__content, 
 			'title': self.__title, 
 			'syntax': syntax,
-			'topic': syntax
+			'topic': self.__topic
 		}
 
 		response_json = self.__api('/api/v2/snippets', params)
 
 		window = self.view
 		window.show_popup('Your snippet has been saved!')
+
+	def on_topic_input_done(self, val):
+		window = self.view.window()
+		self.__topic = val
+		if val:
+			window.show_input_panel("I just learned how to...", "", self.on_title_input_done, None, None)
+
 
 	def on_title_input_done(self, input_string):
 		self.__title = input_string
@@ -80,4 +87,4 @@ class MmdvCommand(sublime_plugin.TextCommand):
 		region1 = sel[0]
 		self.__content = view.substr(region1)
 
-		window.show_input_panel("I just learned how to...", "", self.on_title_input_done, None, None)
+		window.show_input_panel("This snippet is about...", "", self.on_topic_input_done, None, None)
