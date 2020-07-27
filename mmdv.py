@@ -12,8 +12,8 @@ class MmdvLogoutCommand(sublime_plugin.TextCommand):
 class MmdvCommand(sublime_plugin.TextCommand):
 	def __init__(self, view):
 		super().__init__(view)
-		self.BASE_URL = 'localhost:3000'
-		self.connection = 'http'
+		self.BASE_URL = 'mem.dev'
+		self.connection = 'https'
 		self.__title = ''
 		self.__content = ''
 
