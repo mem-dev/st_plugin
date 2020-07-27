@@ -1,0 +1,22 @@
+{
+    "schema_version": "2.0",
+    "packages": [
+        {
+            "name": "Mem.dev Snippet Saver",
+            "author": "mem.dev",
+            "description": "Allows you to save snippets of code into mem.dev, to turn into flashcards.",
+            "details": "https://github.com/mem-dev/st_plugin",
+            "homepage": "https://github.com/mem-dev/st_plugin",
+            "readme": "https://raw.githubusercontent.com/mem-dev/st_plugin/master/README.md",
+            "issues": "https://github.com/mem-dev/st_plugin/issues",
+            "labels": ["spaced repitition", "snippet", "snippet saver"],
+            "releases": [
+                {
+                    "platforms": ["osx", "linux"],
+                    "sublime_text": "*",
+                    "details": "https://github.com/mem-dev/st_plugin/tags"
+                }
+            ]
+        }
+    ]
+}
